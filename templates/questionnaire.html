@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindWell Assessment | DASS-42 Questionnaire</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <script src="{{ url_for('static', filename='questions.js') }}"></script>
+    <style>
+      /* ------------------------------ */
+      /* Base Styling                  */
+      /* ------------------------------ */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f0f9ff;
+        color: #1e3a8a;
+      }
+
+      /* ------------------------------ */
+      /* Navbar                        */
+      /* ------------------------------ */
+      .navbar {
+        background-color: white;
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #1e3a8a;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .logo-text {
+        display: inline;
+      }
+
+      .home-button {
+        padding: 0.5rem 1rem;
+        background-color: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .home-button:hover {
+        background-color: #2563eb;
+      }
+
+      .home-button i {
+        font-size: 0.9rem;
+      }
+
+      /* Mobile Responsive Styles */
+      @media (max-width: 480px) {
+        .home-button {
+          padding: 0.5rem;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          justify-content: center;
+        }
+
+        .home-button span {
+          display: none;
+        }
+
+        .home-button i {
+          font-size: 1.1rem;
+          margin: 0;
+        }
+
+        .logo-text {
+          display: none;
+        }
+
+        .logo i {
+          font-size: 1.5rem;
+        }
+      }
+
+      /* ------------------------------ */
+      /* Container & Layout            */
+      /* ------------------------------ */
+      .container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1rem;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      /* ------------------------------ */
+      /* Progress Bar                  */
+      /* ------------------------------ */
+      .progress-container {
+        margin-bottom: 1.5rem;
+      }
+
+      .progress-text {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+      }
+
+      .progress-bar {
+        width: 100%;
+        background-color: #e0f2fe;
+        border-radius: 25px;
+        overflow: hidden;
+        height: 10px;
+      }
+
+      .progress {
+        height: 10px;
+        background-color: #3b82f6;
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      /* ------------------------------ */
+      /* Question Card                 */
+      /* ------------------------------ */
+      .question-card {
+        background-color: #f8fafc;
+        border-radius: 10px;
+        padding: 1.5rem;
+      }
+
+      .question-header {
+        font-size: 1.2rem;
+        color: #1e3a8a;
+        margin-bottom: 1rem;
+      }
+
+      .question-text {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: #334155;
+      }
+
+      .options-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      /* ------------------------------ */
+      /* Option Cards                  */
+      /* ------------------------------ */
+      .option-card {
+        background-color: white;
+        border: 2px solid #3b82f6;
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s, border-color 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .option-card:hover {
+        background-color: #e0f2fe;
+      }
+
+      .option-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: #3b82f6;
+      }
+
+      .option-text {
+        font-size: 1rem;
+        color: #1e3a8a;
+      }
+
+      .option-card.selected {
+        background-color: #3b82f6;
+        color: #fff;
+        border-color: #3b82f6;
+      }
+
+      /* ------------------------------ */
+      /* Navigation Buttons            */
+      /* ------------------------------ */
+      .navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+      }
+
+      .nav-button {
+        padding: 0.75rem 1.5rem;
+        background-color: #f8fafc;
+        color: #3b82f6;
+        border: 2px solid #3b82f6;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .nav-button:hover {
+        background-color: #3b82f6;
+        color: white;
+      }
+
+      .nav-button:disabled {
+        background-color: #e2e8f0;
+        border-color: #cbd5e1;
+        color: #94a3b8;
+        cursor: not-allowed;
+      }
+
+      .nav-button.back-button {
+        background-color: transparent;
+        border: none;
+        color: #64748b;
+      }
+
+      .nav-button.back-button:hover {
+        color: #3b82f6;
+        background-color: transparent;
+      }
+
+      /* ------------------------------ */
+      /* Results Section               */
+      /* ------------------------------ */
+      .results-container {
+        display: none;
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background-color: #f8fafc;
+        border-radius: 10px;
+      }
+
+      .results-title {
+        font-size: 1.5rem;
+        color: #1e3a8a;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+
+      .result-card {
+        background-color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .result-label {
+        font-weight: bold;
+        color: #1e3a8a;
+        margin-bottom: 0.5rem;
+      }
+
+      .result-value {
+        color: #3b82f6;
+        font-size: 1.1rem;
+      }
+
+      .loading {
+        text-align: center;
+        color: #3b82f6;
+        margin: 1rem 0;
+      }
+
+      /* ------------------------------ */
+      /* Pop-up Question Header        */
+      /* ------------------------------ */
+      .popup-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(135deg, rgba(59,130,246,0.85) 0%, rgba(30,58,138,0.85) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s;
+        opacity: 1;
+      }
+      .popup-header.hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .popup-content {
+        background: rgba(255,255,255,0.85);
+        border-radius: 18px;
+        padding: 2.5rem 2rem 2rem 2rem;
+        box-shadow: 0 8px 32px rgba(30,58,138,0.18);
+        position: relative;
+        max-width: 500px;
+        width: 90vw;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .popup-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #1e3a8a;
+        cursor: pointer;
+        z-index: 2;
+      }
+      .popup-header .question-header {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #1e3a8a;
+        font-weight: 500;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="/" class="home-button">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back</span>
+      </a>
+      <div class="logo">
+        <i class="fas fa-brain"></i>
+        <span class="logo-text">MindWell</span>
+      </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Pop-up Question Header -->
+      <div class="popup-header" id="popup-header">
+        <div class="popup-content">
+          <button class="popup-close" id="popup-close" aria-label="Close">
+            <i class="fas fa-times"></i>
+          </button>
+          <div class="question-header">
+            Please read each statement and choose an option that indicates how much the statement applied to you over the past week. There are no right or wrong answers. Do not spend too much time on any statement.
+          </div>
+        </div>
+      </div>
+      <!-- Progress Section -->
+      <div class="progress-container">
+        <div class="progress-text">
+          <span id="current-question">1</span> of 42 questions
+        </div>
+        <div class="progress-bar">
+          <div class="progress" id="progress"></div>
+        </div>
+      </div>
+
+      <!-- Question Card -->
+      <div class="question-card">
+        <!-- <div class="question-header ">
+          Please read each statement and choose an option that indicates how much the statement applied to you over the past week. There are no right or wrong answers. Do not spend too much time on any statement.         </div> -->
+        <div class="question-text" id="question-text"></div>
+        <div class="options-grid" id="options"></div>
+
+        <!-- Navigation Buttons -->
+        <div class="navigation">
+          <button class="nav-button back-button" id="back-button">
+            <i class="fas fa-arrow-left"></i> Revisit Previous Question
+          </button>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="results-container" id="results-section">
+        <div class="results-title">Your Assessment Results</div>
+        <div class="loading" id="loading" style="display: none">
+          Processing your responses...
+        </div>
+        <div class="result-card">
+          <div class="result-label">Depression Level</div>
+          <div class="result-value" id="depression-result">-</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Anxiety Level</div>
+          <div class="result-value" id="anxiety-result">-</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Stress Level</div>
+          <div class="result-value" id="stress-result">-</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+      let currentQuestion = 0;
+      const totalQuestions = questions.length;
+      const answers = new Array(totalQuestions).fill(null);
+
+      // Configure options with icons (adjust if needed for DASS-42)
+      const optionConfig = [
+        { text: 'Never', value: 0, icon: 'far fa-circle' },
+        { text: 'Sometimes', value: 1, icon: 'far fa-dot-circle' },
+        { text: 'Often', value: 2, icon: 'fas fa-circle' },
+        { text: 'Almost Always', value: 3, icon: 'fas fa-check-circle' },
+      ];
+
+      // DOM Elements
+      const questionText = document.getElementById('question-text');
+      const optionsContainer = document.getElementById('options');
+      const progress = document.getElementById('progress');
+      const currentQuestionSpan = document.getElementById('current-question');
+      const backButton = document.getElementById('back-button');
+
+      // Load the current question
+      function loadQuestion() {
+        const question = questions[currentQuestion];
+        questionText.textContent = question.text;
+        currentQuestionSpan.textContent = currentQuestion + 1;
+
+        // Build the options
+        optionsContainer.innerHTML = optionConfig
+          .map(
+            (opt) => `
+        <div class="option-card" data-value="${opt.value}">
+          <i class="${opt.icon} option-icon"></i>
+          <div class="option-text">${opt.text}</div>
+        </div>
+      `
+          )
+          .join('');
+
+        // Highlight previously selected option (if any)
+        optionsContainer.querySelectorAll('.option-card').forEach((card) => {
+          const value = card.dataset.value;
+          card.classList.toggle('selected', value == answers[currentQuestion]);
+        });
+
+        // Update progress bar
+        progress.style.width = `${
+          ((currentQuestion + 1) / totalQuestions) * 100
+        }%`;
+
+        // Enable/disable back button
+        backButton.disabled = currentQuestion === 0;
+      }
+
+      // Save the user's answer and auto-advance
+      function saveAnswer(value) {
+        answers[currentQuestion] = value;
+
+        // Move to next question after 0.3s
+        setTimeout(() => {
+          if (currentQuestion < totalQuestions - 1) {
+            currentQuestion++;
+            loadQuestion();
+          } else {
+            // Submit answers for prediction
+            submitAnswers();
+          }
+        }, 300);
+      }
+
+      // Submit answers to backend for prediction
+      async function submitAnswers() {
+        const loading = document.getElementById('loading');
+        const resultsSection = document.getElementById('results-section');
+
+        try {
+          loading.style.display = 'block';
+          resultsSection.style.display = 'block';
+
+          const response = await fetch('/predict', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ answers }),
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            // Update severity levels
+            document.getElementById(
+              'depression-result'
+            ).innerHTML = `${result.depression}<br><small>Score: ${result.scores.depression}</small>`;
+            document.getElementById(
+              'anxiety-result'
+            ).innerHTML = `${result.anxiety}<br><small>Score: ${result.scores.anxiety}</small>`;
+            document.getElementById(
+              'stress-result'
+            ).innerHTML = `${result.stress}<br><small>Score: ${result.scores.stress}</small>`;
+          } else {
+            throw new Error(result.error || 'Failed to get prediction');
+          }
+        } catch (error) {
+          alert('Error getting prediction: ' + error.message);
+        } finally {
+          loading.style.display = 'none';
+        }
+      }
+
+      // Go back one question
+      function goBack() {
+        if (currentQuestion > 0) {
+          currentQuestion--;
+          loadQuestion();
+        }
+      }
+
+      // Handle clicks on options
+      optionsContainer.addEventListener('click', (e) => {
+        const optionCard = e.target.closest('.option-card');
+        if (optionCard) {
+          // Mark the clicked card as selected
+          const value = optionCard.dataset.value;
+          optionsContainer.querySelectorAll('.option-card').forEach((card) => {
+            card.classList.remove('selected');
+          });
+          optionCard.classList.add('selected');
+
+          // Save the answer and auto-advance
+          saveAnswer(value);
+        }
+      });
+
+      // Back button
+      backButton.addEventListener('click', goBack);
+
+      // Pop-up auto-hide and close logic
+      const popupHeader = document.getElementById('popup-header');
+      const popupClose = document.getElementById('popup-close');
+      let popupTimeout = setTimeout(() => {
+        popupHeader.classList.add('hide');
+      }, 10000);
+      popupClose.addEventListener('click', () => {
+        popupHeader.classList.add('hide');
+        clearTimeout(popupTimeout);
+      });
+
+      // Initialize
+      loadQuestion();
+    </script>
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
+      import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+      import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDS7bQD5aJWjQJ3HTR1o_Gu3ExIBacvGQw",
+        authDomain: "mentalhealth-46b7c.firebaseapp.com",
+        projectId: "mentalhealth-46b7c",
+        storageBucket: "mentalhealth-46b7c.firebasestorage.app",
+        messagingSenderId: "1041135233282",
+        appId: "1:1041135233282:web:c984b2e9da814899be3a1b",
+        measurementId: "G-20DTW6LLHY"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+      const db = getFirestore(app);
+
+      // UI Elements for Auth
+      const signInBtn = document.createElement('button');
+      signInBtn.textContent = 'Sign in with Google to Save Results';
+      signInBtn.style = 'margin: 1rem auto; display: block; background: #4285F4; color: white; border: none; border-radius: 5px; padding: 0.75rem 1.5rem; font-size: 1rem; cursor: pointer;';
+      signInBtn.id = 'google-signin-btn';
+      const signOutBtn = document.createElement('button');
+      signOutBtn.textContent = 'Sign out';
+      signOutBtn.style = 'margin: 1rem auto; display: none; background: #e53e3e; color: white; border: none; border-radius: 5px; padding: 0.5rem 1rem; font-size: 0.9rem; cursor: pointer;';
+      signOutBtn.id = 'google-signout-btn';
+      let userEmail = null;
+
+      // Insert sign-in button above the questionnaire container
+      window.addEventListener('DOMContentLoaded', () => {
+        const container = document.querySelector('.container');
+        if (container) {
+          container.parentNode.insertBefore(signInBtn, container);
+          container.parentNode.insertBefore(signOutBtn, container.nextSibling);
+        }
+      });
+
+      signInBtn.addEventListener('click', async () => {
+        try {
+          const result = await signInWithPopup(auth, provider);
+          userEmail = result.user.email;
+          signInBtn.style.display = 'none';
+          signOutBtn.style.display = 'block';
+          alert('Signed in as ' + userEmail);
+        } catch (error) {
+          alert('Sign-in failed: ' + error.message);
+        }
+      });
+      signOutBtn.addEventListener('click', async () => {
+        await signOut(auth);
+        userEmail = null;
+        signInBtn.style.display = 'block';
+        signOutBtn.style.display = 'none';
+        alert('Signed out.');
+      });
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          userEmail = user.email;
+          signInBtn.style.display = 'none';
+          signOutBtn.style.display = 'block';
+        } else {
+          userEmail = null;
+          signInBtn.style.display = 'block';
+          signOutBtn.style.display = 'none';
+        }
+      });
+
+      // Patch submitAnswers to save to Firestore if signed in
+      window.submitAnswers = async function submitAnswers() {
+        const loading = document.getElementById('loading');
+        const resultsSection = document.getElementById('results-section');
+
+        try {
+          loading.style.display = 'block';
+          resultsSection.style.display = 'block';
+
+          const response = await fetch('/predict', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ answers }),
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            document.getElementById(
+              'depression-result'
+            ).innerHTML = `${result.depression}<br><small>Score: ${result.scores.depression}</small>`;
+            document.getElementById(
+              'anxiety-result'
+            ).innerHTML = `${result.anxiety}<br><small>Score: ${result.scores.anxiety}</small>`;
+            document.getElementById(
+              'stress-result'
+            ).innerHTML = `${result.stress}<br><small>Score: ${result.scores.stress}</small>`;
+
+            // Save to Firestore if signed in
+            if (userEmail) {
+              await addDoc(collection(db, 'dass42_results'), {
+                email: userEmail,
+                timestamp: new Date(),
+                answers: answers,
+                depression: result.depression,
+                depressionScore: result.scores.depression,
+                anxiety: result.anxiety,
+                anxietyScore: result.scores.anxiety,
+                stress: result.stress,
+                stressScore: result.scores.stress
+              });
+            }
+          } else {
+            throw new Error(result.error || 'Failed to get prediction');
+          }
+        } catch (error) {
+          alert('Error getting prediction: ' + error.message);
+        } finally {
+          loading.style.display = 'none';
+        }
+      }
+    </script>
+  </body>
+</html>
