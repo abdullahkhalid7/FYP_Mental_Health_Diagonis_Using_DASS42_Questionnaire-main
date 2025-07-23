@@ -104,3 +104,21 @@ For any questions or concerns, please contact the developer:
 
 - Name: Abdullah
 - Program: BCS 2024
+
+# Deployment on Railway.com
+
+## Steps
+
+1. **Create a Railway account** at https://railway.app/
+2. **Create a new project** and link your GitHub repository.
+3. **Set the start command** to:
+   ```
+   python app.py
+   ```
+4. **(Optional) Set environment variables** if your app needs any (not required by default for this project).
+5. **Ensure your `requirements.txt` and model files are present in the repo.**
+6. **Deploy!** Railway will install dependencies and run your Flask app.
+
+Your app will be available at a Railway-provided URL after deployment.
+
+---
